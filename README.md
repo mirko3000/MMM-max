@@ -6,7 +6,7 @@ This module displays your local MAX! heating temperatures from your MAX! cube.
 
 ## Installation
 
-1. Navigate into your MagicMirror's modules folder and execute git clone https://github.com/xxxxx.git. A new folder will appear navigate into it.
+1. Navigate into your MagicMirror's modules folder and execute git clone https://github.com/mirko3000/MMM-max.git. A new folder will appear navigate into it.
 2. Execute npm install to install the node dependencies.
 
 ## Using the module
