@@ -1,0 +1,3 @@
+[submodule "maxcube"]
+	path = maxcube
+	url = https://github.com/ivesdebruycker/maxcube.git
