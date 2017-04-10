@@ -1,0 +1,25 @@
+.max ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.max ul .name,
+.max ul .art {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 75%;
+}
+.max ul .name {
+  padding: 0 1em;
+  width: 500px
+}
+.max ul .art img {
+  height: 120px;
+}
+.max ul .room {
+  font-size: 50%;
+  padding: .25em .5em;
+}
+.max ul.flip {
+  direction: rtl;
+}

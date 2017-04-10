@@ -9,19 +9,20 @@
 
 const NodeHelper = require('node_helper');
 
-var MaxCube = require('./maxcube');
-module.exports = NodeHelper.create({
+var MaxCube = require('./maxcube/maxcube');
 
+module.exports = NodeHelper.create({
 
   start: function () {
     console.log("Starting max helper");
   },
 
   //Subclass socketNotificationReceived received.
-  socketNotificationReceived: function(notification, url, port) {
+  socketNotificationReceived: function(notification, payload) {
     if (notification === 'MAX_UPDATE') {
       var self = this;
-      var myMaxCube  = new MaxCube(url, port);
+      var config = payload;
+      var myMaxCube  = new MaxCube(config.maxIP, config.maxPort);
       myMaxCube.on('connected', function () {
 
         myMaxCube.getDeviceStatus().then(function (devices) {

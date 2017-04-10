@@ -6,6 +6,9 @@
  * By Mirko Bleyh
  * MIT Licensed.
  */
+  var cache = [];
+  var cacheIndex = [];
+
 Module.register('MMM-max', {
   defaults: {
     fade: true,
@@ -16,13 +19,14 @@ Module.register('MMM-max', {
     twoColLayout: false
   },
 
-  //var data;
+
 
   // Override socket notification handler.
   socketNotificationReceived: function (notification, payload) {
       if (notification === 'MAX_DATA') {
           Log.info('received MAX_DATA');
           this.render(payload);
+          this.updateDom(3000);
       }
   },
 
@@ -36,22 +40,17 @@ Module.register('MMM-max', {
   },
 
   update: function(){
+    var maxConfig = {
+      maxIP: this.config.maxIP,
+      maxPort: this.config.maxPort
+    };
+
     this.sendSocketNotification(
-      'MAX_UPDATE', this.config.maxIP, this.config.maxPort);
+      'MAX_UPDATE', maxConfig);
   },
 
-  parsePayload: function (payload) {
-  
-    return 'parse';
-  },
-
-  getScripts: function () {
-    return [
-      'String.format.js',
-  		//this.file('maxcube-commandfactory.js'), // this file will be loaded straight from the module folder.
-  		//this.file('maxcube-commandparser.js'), // this file will be loaded straight from the module folder.
-  		//this.file('maxcube-lowlevel.js'), // this file will be loaded straight from the module folder.
-    ];
+  getStyles: function() {
+    return ['MMM-max.css'];
   },
 
   getDom: function() {
@@ -61,12 +60,9 @@ Module.register('MMM-max', {
     }else { 
       content = '<ul>'+this.dom+'</ul>';
     }
-    return $('<div>'+content+'</div>')[0];
+    return $('<div class="max">'+content+'</div>')[0];
   },
 
-  getStyles: function () {
-    return ["font-awesome.css"];
-  },
 
   html: {
     table: '<table>{0}</table>',
@@ -81,15 +77,32 @@ Module.register('MMM-max', {
       var rowCount = 0;
       var tableText = ''
       $.each(data, function (i, item) {
-        var room = item.deviceInfo.room_name;
-        var mode = item.mode;
-        var temp = item.temp;
-        var valve = item.valve;
-        var setpoint = item.setpoint;
-        var time_until = item.time_until;
-        var locked = item.panel_locked;
+        var room = {
+          id: item.rf_address,
+          name: item.deviceInfo.room_name,
+          temp: item.temp,
+          setpoint: item.setpoint,
+          valve: item.valve
+        };
 
-        var currCol = this.html.col.format(room, setpoint, temp, valve);
+        // Get previously cached entry - if exists
+        if (cacheIndex.indexOf(room.id) != -1) {
+          var cacheRoom = cache[cacheIndex.indexOf(room.id)];
+
+          // Check if temp is better from cache then current value
+          if (room.temp === 0) {
+            room.temp = cacheRoom.temp;
+          }
+
+          // Update cache
+          cache[cacheIndex.indexOf(room.id)] = room;
+        }
+        else {
+          // Create new entry in cache
+          cacheIndex[cacheIndex.length] = room.id;
+          cache[cache.length] = room;
+        }
+        var currCol = this.html.col.format(room.name, room.setpoint, room.temp, room.valve);
 
         if (i%2!=0 || !this.config.twoColLayout) {
           // start new row
