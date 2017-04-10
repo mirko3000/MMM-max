@@ -51,6 +51,7 @@ Module.register('MMM-max', {
 
   getScripts: function() {
     return [
+      'String.format.js',
       'https://code.jquery.com/jquery-2.2.3.min.js',  // this file will be loaded from the jquery servers.
     ]
   },
