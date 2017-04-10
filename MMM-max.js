@@ -1,9 +1,9 @@
 /* global Module */
 
 /* Magic Mirror
- * Module: max
+ * Module: MMM-max
  *
- * By Mirko Bleyh
+ * By mirko3000
  * MIT Licensed.
  */
   var cache = [];

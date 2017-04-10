@@ -1,9 +1,9 @@
 "use strict";
 
 /* Magic Mirror
- * Module: MMM-Wunderlist
+ * Module: MMM-max
  *
- * By Paul-Vincent Roll http://paulvincentroll.com
+ * By mirko30000
  * MIT Licensed.
  */
 
