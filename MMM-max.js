@@ -49,6 +49,12 @@ Module.register('MMM-max', {
       'MAX_UPDATE', maxConfig);
   },
 
+  getScripts: function() {
+    return [
+      'https://code.jquery.com/jquery-2.2.3.min.js',  // this file will be loaded from the jquery servers.
+    ]
+  },
+
   getStyles: function() {
     return ['MMM-max.css'];
   },
