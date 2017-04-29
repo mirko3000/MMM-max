@@ -124,7 +124,7 @@ Module.register('MMM-max', {
         if (room.mode === "VACATION") {
           icon = "fa-plane";
         }
-        else if (room.mode === 'AUTOMATIC') {
+        else if (room.mode === "AUTO") {
           icon = "fa-clock-o";
         } else {
           icon = "fa-hand-stop-o";
