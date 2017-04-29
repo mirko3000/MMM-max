@@ -76,7 +76,7 @@ Module.register('MMM-max', {
 
   html: {
     table: '<table>{0}</table>',
-    col: '<td align="left" class="normal light small">{0}</td><td align="left" class="dimmed light xsmall">{1}°C</td><td align="left" class="dimmed light xsmall">{2}°C</td><td align="left" class="dimmed light xsmall">{3}%</td>',
+    col: '<td align="left" class="normal light small">{0}</td><td align="left" class="dimmed light xsmall">{1}°C</td><td align="left" class="dimmed light xsmall">{2}°C</td><td align="left" class="dimmed light xsmall">{3}%</td><td class="dimmed light xsmall"><div class="fa {4}"></div></td>',
     row: '<tr>{0}{1}</tr>',
     room: '<li><div class="room xsmall">{0} : {1}°C</div></li>',
     loading: '<div class="dimmed light xsmall">Connecting to MAX! cube...</div>',
@@ -92,7 +92,8 @@ Module.register('MMM-max', {
           name: item.deviceInfo.room_name,
           temp: item.temp,
           setpoint: item.setpoint,
-          valve: item.valve
+          valve: item.valve,
+          mode: item.mode
         };
 
         // Get previously cached entry - if exists
@@ -118,7 +119,18 @@ Module.register('MMM-max', {
           room.temp = '-';
         }
 
-        var currCol = this.html.col.format(room.name, room.setpoint, room.temp, room.valve);
+        var icon = "";
+        // Check for automatic or manual mode
+        if (room.mode === "VACATION") {
+          icon = "fa-plane";
+        }
+        else if (room.mode === 'AUTOMATIC') {
+          icon = "fa-clock-o";
+        } else {
+          icon = "fa-hand-stop-o";
+        }
+
+        var currCol = this.html.col.format(room.name, room.setpoint, room.temp, room.valve, icon);
 
         if (i%2!=0 || !this.config.twoColLayout) {
           // start new row
