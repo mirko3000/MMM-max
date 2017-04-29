@@ -10,6 +10,9 @@
   var cacheIndex = [];
 
 Module.register('MMM-max', {
+
+  requiresVersion: "2.0.0",
+
   defaults: {
     fade: true,
     fadePoint: 0.25,
@@ -109,6 +112,12 @@ Module.register('MMM-max', {
           cacheIndex[cacheIndex.length] = room.id;
           cache[cache.length] = room;
         }
+
+        // sometimes the temperature ist not given, initialize it with "-"
+        if (!room.temp) {
+          room.temp = '-';
+        }
+
         var currCol = this.html.col.format(room.name, room.setpoint, room.temp, room.valve);
 
         if (i%2!=0 || !this.config.twoColLayout) {
