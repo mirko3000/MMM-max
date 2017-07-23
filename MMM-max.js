@@ -76,7 +76,7 @@ Module.register('MMM-max', {
 
   html: {
     table: '<table>{0}</table>',
-    col: '<td align="left" class="normal light small">{0}</td><td align="left" class="dimmed light xsmall">{1}°C</td><td align="left" class="dimmed light xsmall">{2}°C</td><td align="left" class="dimmed light xsmall">{3}%</td><td class="dimmed light xsmall"><div class="fa {4}"></div></td>',
+    col: '<td align="left" class="normal light small">{0}</td><td align="left" class="dimmed light xsmall">{1}°C</td><td align="left" class="dimmed light xsmall">{2}°C</td><td align="left" class="dimmed light xsmall">{3}%</td><td class="dimmed xsmall light"><div class="fa fa-1 {4}"></div></td>',
     row: '<tr>{0}{1}</tr>',
     room: '<li><div class="room xsmall">{0} : {1}°C</div></li>',
     loading: '<div class="dimmed light xsmall">Connecting to MAX! cube...</div>',
@@ -125,7 +125,7 @@ Module.register('MMM-max', {
           icon = "fa-plane";
         }
         else if (room.mode === "AUTO") {
-          icon = "fa-clock-o";
+          icon = "fa-dashboard";
         } else {
           icon = "fa-hand-stop-o";
         }

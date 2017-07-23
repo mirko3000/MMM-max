@@ -20,6 +20,7 @@ module.exports = NodeHelper.create({
   //Subclass socketNotificationReceived received.
   socketNotificationReceived: function(notification, payload) {
     if (notification === 'MAX_UPDATE') {
+      console.log("Triggering MAX upate");
       var self = this;
       var config = payload;
       var myMaxCube  = new MaxCube(config.maxIP, config.maxPort);
@@ -27,11 +28,11 @@ module.exports = NodeHelper.create({
 
         myMaxCube.getDeviceStatus().then(function (devices) {
 
-          for (i = 0; i < devices.length; i++) { 
+          for (var i = 0; i < devices.length; i++) { 
               devices[i].deviceInfo = myMaxCube.getDeviceInfo(devices[i].rf_address);
-            }
-            self.sendSocketNotification('MAX_DATA', devices);
-           myMaxCube.close();
+          }
+          self.sendSocketNotification('MAX_DATA', devices);
+          myMaxCube.close();
         });
       });
     }
