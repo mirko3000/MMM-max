@@ -87,59 +87,63 @@ Module.register('MMM-max', {
       var rowCount = 0;
       var tableText = ''
       $.each(data, function (i, item) {
-        var room = {
-          id: item.rf_address,
-          name: item.deviceInfo.room_name,
-          temp: item.temp,
-          setpoint: item.setpoint,
-          valve: item.valve,
-          mode: item.mode
-        };
+        if (item.deviceInfo.device_type === 1) {
 
-        // Get previously cached entry - if exists
-        if (cacheIndex.indexOf(room.id) != -1) {
-          var cacheRoom = cache[cacheIndex.indexOf(room.id)];
+          var room = {
+            id: item.rf_address,
+            name: item.deviceInfo.room_name,
+            temp: item.temp,
+            setpoint: item.setpoint,
+            valve: item.valve,
+            mode: item.mode
+          };
 
-          // Check if temp is better from cache then current value
-          if (room.temp === 0) {
-            room.temp = cacheRoom.temp;
+          // Get previously cached entry - if exists
+          if (cacheIndex.indexOf(room.id) != -1) {
+            var cacheRoom = cache[cacheIndex.indexOf(room.id)];
+
+            // Check if temp is better from cache then current value
+            if (room.temp === 0) {
+              room.temp = cacheRoom.temp;
+            }
+
+            // Update cache
+            cache[cacheIndex.indexOf(room.id)] = room;
+          }
+          else {
+            // Create new entry in cache
+            cacheIndex[cacheIndex.length] = room.id;
+            cache[cache.length] = room;
           }
 
-          // Update cache
-          cache[cacheIndex.indexOf(room.id)] = room;
-        }
-        else {
-          // Create new entry in cache
-          cacheIndex[cacheIndex.length] = room.id;
-          cache[cache.length] = room;
-        }
+          // sometimes the temperature ist not given, initialize it with "-"
+          if (!room.temp) {
+            room.temp = '-';
+          }
 
-        // sometimes the temperature ist not given, initialize it with "-"
-        if (!room.temp) {
-          room.temp = '-';
-        }
+          var icon = "";
+          // Check for automatic or manual mode
+          if (room.mode === "VACATION") {
+            icon = "fa-plane";
+          }
+          else if (room.mode === "AUTO") {
+            icon = "fa-dashboard";
+          } else {
+            icon = "fa-hand-stop-o";
+          }
 
-        var icon = "";
-        // Check for automatic or manual mode
-        if (room.mode === "VACATION") {
-          icon = "fa-plane";
-        }
-        else if (room.mode === "AUTO") {
-          icon = "fa-dashboard";
-        } else {
-          icon = "fa-hand-stop-o";
-        }
+          var currCol = this.html.col.format(room.name, room.setpoint, room.temp, room.valve, icon);
 
-        var currCol = this.html.col.format(room.name, room.setpoint, room.temp, room.valve, icon);
+          if (i%2!=0 || !this.config.twoColLayout) {
+            // start new row
+            tableText += this.html.row.format(previousCol, currCol);
+            previousCol = '';
+            rowCount++;
+          }
+          else {
+            previousCol = currCol;
+          }
 
-        if (i%2!=0 || !this.config.twoColLayout) {
-          // start new row
-          tableText += this.html.row.format(previousCol, currCol);
-          previousCol = '';
-          rowCount++;
-        }
-        else {
-          previousCol = currCol;
         }
 
         //text += this.renderRoom(room, mode, temp, valve, time_until, locked);
