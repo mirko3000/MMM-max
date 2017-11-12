@@ -28,6 +28,7 @@ Module.register('MMM-max', {
   socketNotificationReceived: function (notification, payload) {
       if (notification === 'MAX_DATA') {
           Log.info('received MAX_DATA');
+          this.notifyHeatingStatus(payload);
           this.render(payload);
           this.updateDom(3000);
       }
@@ -50,6 +51,11 @@ Module.register('MMM-max', {
 
     this.sendSocketNotification(
       'MAX_UPDATE', maxConfig);
+  },
+
+  notifyHeatingStatus: function(payload) {
+
+
   },
 
   getScripts: function() {
@@ -86,6 +92,7 @@ Module.register('MMM-max', {
       var previousCol =''
       var rowCount = 0;
       var tableText = ''
+      var self = this;
       $.each(data, function (i, item) {
         if (item.deviceInfo.device_type === 1) {
 
@@ -105,6 +112,18 @@ Module.register('MMM-max', {
             // Check if temp is better from cache then current value
             if (room.temp === 0) {
               room.temp = cacheRoom.temp;
+            }
+
+            // If valve setting has changed, send out notification
+            if (room.valve != cacheRoom.valve) {
+              var payload = {
+                room: room.name, 
+                targetTemperature: room.temp, 
+                measuredTemperature: room.setpoint, 
+                valve: room.valve
+              };
+              self.sendNotification(
+                'MAX_HEATING_CHANGE', payload);
             }
 
             // Update cache
