@@ -93,76 +93,89 @@ Module.register('MMM-max', {
       var rowCount = 0;
       var tableText = ''
       var self = this;
+
+      // Sort the rooms based on the sorting order
+      var rooms = [];
+
       $.each(data, function (i, item) {
         if (item.deviceInfo.device_type === 1) {
-
           var room = {
             id: item.rf_address,
             name: item.deviceInfo.room_name,
             temp: item.temp,
             setpoint: item.setpoint,
             valve: item.valve,
-            mode: item.mode
+            mode: item.mode,
+            sort: item.deviceInfo.room_id,
           };
 
-          // Get previously cached entry - if exists
-          if (cacheIndex.indexOf(room.id) != -1) {
-            var cacheRoom = cache[cacheIndex.indexOf(room.id)];
+          rooms.push(room);
+        }
+      }.bind(this));
 
-            // Check if temp is better from cache then current value
-            if (room.temp === 0) {
-              room.temp = cacheRoom.temp;
-            }
+      rooms.sort(function(a, b) {
+        return a.sort - b.sort;
+      });
 
-            // If valve setting has changed, send out notification
-            if (room.valve != cacheRoom.valve) {
-              var payload = {
-                room: room.name, 
-                targetTemperature: room.temp, 
-                measuredTemperature: room.setpoint, 
-                valve: room.valve
-              };
-              self.sendNotification(
-                'MAX_HEATING_CHANGE', payload);
-            }
 
-            // Update cache
-            cache[cacheIndex.indexOf(room.id)] = room;
-          }
-          else {
-            // Create new entry in cache
-            cacheIndex[cacheIndex.length] = room.id;
-            cache[cache.length] = room;
+      $.each(rooms, function (i, room) {
+
+        // Get previously cached entry - if exists
+        if (cacheIndex.indexOf(room.id) != -1) {
+          var cacheRoom = cache[cacheIndex.indexOf(room.id)];
+
+          // Check if temp is better from cache then current value
+          if (room.temp === 0) {
+            room.temp = cacheRoom.temp;
           }
 
-          // sometimes the temperature ist not given, initialize it with "-"
-          if (!room.temp) {
-            room.temp = '-';
+          // If valve setting has changed, send out notification
+          if (room.valve != cacheRoom.valve) {
+            var payload = {
+              room: room.name, 
+              targetTemperature: room.temp, 
+              measuredTemperature: room.setpoint, 
+              valve: room.valve
+            };
+            self.sendNotification(
+              'MAX_HEATING_CHANGE', payload);
           }
 
-          var icon = "";
-          // Check for automatic or manual mode
-          if (room.mode === "VACATION") {
-            icon = "fa-plane";
-          }
-          else if (room.mode === "AUTO") {
-            icon = "fa-dashboard";
-          } else {
-            icon = "fa-hand-stop-o";
-          }
+          // Update cache
+          cache[cacheIndex.indexOf(room.id)] = room;
+        }
+        else {
+          // Create new entry in cache
+          cacheIndex[cacheIndex.length] = room.id;
+          cache[cache.length] = room;
+        }
 
-          var currCol = this.html.col.format(room.name, room.setpoint, room.temp, room.valve, icon);
+        // sometimes the temperature ist not given, initialize it with "-"
+        if (!room.temp) {
+          room.temp = '-';
+        }
 
-          if (i%2!=0 || !this.config.twoColLayout) {
-            // start new row
-            tableText += this.html.row.format(previousCol, currCol);
-            previousCol = '';
-            rowCount++;
-          }
-          else {
-            previousCol = currCol;
-          }
+        var icon = "";
+        // Check for automatic or manual mode
+        if (room.mode === "VACATION") {
+          icon = "fa-plane";
+        }
+        else if (room.mode === "AUTO") {
+          icon = "fa-dashboard";
+        } else {
+          icon = "fa-hand-stop-o";
+        }
 
+        var currCol = this.html.col.format(room.name, room.setpoint, room.temp, room.valve, icon);
+
+        if (i%2!=0 || !this.config.twoColLayout) {
+          // start new row
+          tableText += this.html.row.format(previousCol, currCol);
+          previousCol = '';
+          rowCount++;
+        }
+        else {
+          previousCol = currCol;
         }
 
         //text += this.renderRoom(room, mode, temp, valve, time_until, locked);
