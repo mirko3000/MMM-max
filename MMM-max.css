@@ -1,3 +1,6 @@
+.MMM-max {
+  min-width: 350px;
+}
 .max ul {
   list-style-type: none;
   padding: 0;
